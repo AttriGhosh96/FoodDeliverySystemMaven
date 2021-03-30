@@ -1,0 +1,68 @@
+R1-c1
+r2-c2
+r3-c3
+r4-c4
+
+
+path - r1 c3 r2 c4
+
+r1,c1
+
+({c1,r1}, {c2,r2}, {c3,r1}, {c4,r3}) - orderrequest
+
+orders={o1 , o2 , o3 , o4}
+
+traverse orders and pick any subset of orders
+
+
+{o2 , o3 , o4}  of size n {R4,C4,R2,C2,R3,C3} ->> {R3,R2,C4,C3,R4}(not accepted)
+
+set of n*2 locations
+
+
+permutation of this n*2 locations
+constraints: 1. Relative ordering of R:C should be maintained
+             2.
+
+             r1r2c2c1-> 1 trip
+             r1c1r2c2r3c3r4c4r5c5r6c6.... =>1 Trip
+
+
+
+Include wait time of customer as a factor, and keep check in fitness function
+Candidate creation
+* common subexpression
+
+* Mix and match----->think about implementation
+
+candidate = F(F(P1,P2),P3)
+
+Dominance Test
+
+Things to do
+1. Mix and match implementation
+2. Generate population- try out
+
+Working of Mix and Match algorithm
+1. Select 1 parent-gapped order array
+
+
+...............................................
+1.  Rest Service -> List of orders
+2.
+
+List<Order> orderList
+double customerCustomer[][]
+double customerRestaurant[][]
+double restaurantRestaurant[][]
+
+
+We have all subsets of the placed orders.
+We pick one subset to generate gaped orders:- iterate the set, introduce random gaps, use permutations of gaped orders(list of gapped order)
+                                                GapedOrders-> GO1, GO2,GO3
+
+
+
+
+
+
