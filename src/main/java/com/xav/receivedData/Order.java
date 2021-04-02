@@ -46,5 +46,13 @@ public class Order {
       result = 31 * result + (getRestaurant() != null ? getRestaurant().hashCode() : 0);
       return result;
    }
+
+   @Override
+   public String toString() {
+      return "Order{" +
+              "customer=" + customer +
+              ", restaurant=" + restaurant +
+              '}';
+   }
 }
 

@@ -4,20 +4,20 @@ import com.xav.receivedData.Order;
 
 public class GapedOrder {
 
-    private Order oder;
+    private Order order;
     private int gap;
 
-    public GapedOrder(Order oder, int gap) {
-        this.oder = oder;
+    public GapedOrder(Order order, int gap) {
+        this.order = order;
         this.gap = gap;
     }
 
-    public Order getOder() {
-        return oder;
+    public Order getOrder() {
+        return order;
     }
 
-    public void setOder(Order oder) {
-        this.oder = oder;
+    public void setOrder(Order order) {
+        this.order = order;
     }
 
     public int getGap() {
@@ -36,13 +36,21 @@ public class GapedOrder {
         GapedOrder that = (GapedOrder) o;
 
         if (getGap() != that.getGap()) return false;
-        return getOder() != null ? getOder().equals(that.getOder()) : that.getOder() == null;
+        return getOrder() != null ? getOrder().equals(that.getOrder()) : that.getOrder() == null;
     }
 
     @Override
     public int hashCode() {
-        int result = getOder() != null ? getOder().hashCode() : 0;
+        int result = getOrder() != null ? getOrder().hashCode() : 0;
         result = 31 * result + getGap();
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "GapedOrder{" +
+                "order=" + order +
+                ", gap=" + gap +
+                '}';
     }
 }

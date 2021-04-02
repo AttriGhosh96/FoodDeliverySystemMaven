@@ -44,4 +44,12 @@ public class Customer {
         result = 31 * result + (getCustomerId() != null ? getCustomerId().hashCode() : 0);
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "Customer{" +
+                "customerLocation=" + customerLocation +
+                ", customerId='" + customerId + '\'' +
+                '}';
+    }
 }

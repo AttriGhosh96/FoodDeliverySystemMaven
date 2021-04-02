@@ -9,13 +9,6 @@ public class ResultPath {
         this.path = path;
     }
 
-    @Override
-    public String toString() {
-        return "ResultPath{" +
-                "path=" + path +
-                '}';
-    }
-
     public List<Location> getPath() {
         return path;
     }
@@ -37,5 +30,12 @@ public class ResultPath {
     @Override
     public int hashCode() {
         return path != null ? path.hashCode() : 0;
+    }
+
+    @Override
+    public String toString() {
+        return "ResultPath{" +
+                "path=" + path +
+                '}';
     }
 }

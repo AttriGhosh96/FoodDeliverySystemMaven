@@ -44,4 +44,12 @@ public class Restaurant {
         result = 31 * result + (getRestaurantId() != null ? getRestaurantId().hashCode() : 0);
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "Restaurant{" +
+                "restaurantLocation=" + restaurantLocation +
+                ", restaurantId='" + restaurantId + '\'' +
+                '}';
+    }
 }

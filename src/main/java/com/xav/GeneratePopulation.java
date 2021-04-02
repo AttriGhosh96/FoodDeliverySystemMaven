@@ -69,12 +69,12 @@ public class GeneratePopulation {
         restaurantRestaurantDistanceMatrix = Utility.extractSubArray(allToAll, noOfUniqueCustomers, (noOfUniqueCustomers + noOfUniqueRestaurants)-1, noOfUniqueCustomers, (noOfUniqueCustomers + noOfUniqueRestaurants)-1 );
         customerRestaurantDistanceMatrix = Utility.extractSubArray(allToAll, 0, noOfUniqueCustomers-1, noOfUniqueCustomers, (noOfUniqueCustomers + noOfUniqueRestaurants)-1);
 
-        System.out.println("Customer-Customer");
+       /* System.out.println("Customer-Customer");
         display(customerCustomerDistanceMatrix);
         System.out.println("Restaurant-Restaurant");
         display(restaurantRestaurantDistanceMatrix);
         System.out.println("Customer-Restaurant");
-        display(customerRestaurantDistanceMatrix);
+        display(customerRestaurantDistanceMatrix);*/
 
 
     }
@@ -123,7 +123,7 @@ public class GeneratePopulation {
 
         Set<Set<Order>> allSubsetOrder = new HashSet<Set<Order>>();
         allSubsetOrder = Utility.getAllSubset(orders); // till with A
-        for(Set<Order> oneSubsetOrder : allSubsetOrder)
+        for(Set<Order> oneSubsetOrder : allSubsetOrder) //have to check
         {
             getGapedOrders(oneSubsetOrder);
         }
@@ -138,21 +138,99 @@ public class GeneratePopulation {
     {
         Collection<List<Order>> orderPermutations = Collections2.permutations(orders);
 
-        Set<List<GapedOrder>> gapedorders = new HashSet<List<GapedOrder>>();
+        Set<List<GapedOrder>> gapedOrdersOfAllPermutations = new HashSet<List<GapedOrder>>();
 
         for (List<Order> orderPermutation : orderPermutations)
         {
+            List<GapedOrder> gapedOrderOnePermutationList = new ArrayList<GapedOrder>();
             for(Order order : orderPermutation) //till with A
             {
                 int randomGap = (int) ((2*orderPermutation.size())*Math.random());
+                GapedOrder generatedGapedOrder = new GapedOrder(order, randomGap); //gaped order generated for 'order'
+                gapedOrderOnePermutationList.add(generatedGapedOrder);
 
             }
+            gapedOrdersOfAllPermutations.add(gapedOrderOnePermutationList);
 
         }
 
-
-        return null;
+        return gapedOrdersOfAllPermutations;
     }
+
+    //converting gaped orders to list of locations(paths)
+    public List<Location> gapedOrderToPath(List<GapedOrder> gapedOrders)
+    {
+        int sumOfGaps=0;
+        int maxSizeOfList;
+        for(GapedOrder gapedOrder : gapedOrders)
+        {
+            sumOfGaps += gapedOrder.getGap();
+        }
+        maxSizeOfList = sumOfGaps + 2*gapedOrders.size();
+
+        Location [] pathFromGapedOrders = new Location[maxSizeOfList];
+        int i, startIndex =0;
+        HashSet<Location> alreadyVisitedRestaurant = new HashSet<Location>();
+        HashMap<Location, Integer> alreadyVisitedCustomer = new HashMap<Location, Integer>();
+        for(i=0; i<gapedOrders.size(); i++)
+        {
+            int gap = gapedOrders.get(i).getGap();
+            Location orderRestaurantLocation = gapedOrders.get(i).getOrder().getRestaurant().getRestaurantLocation();
+            Location orderCustomerLocation = gapedOrders.get(i).getOrder().getCustomer().getCustomerLocation();
+            int checkIndex = startIndex + gap +1;
+
+
+            while (!Objects.equals(pathFromGapedOrders[checkIndex], null))
+            {
+               startIndex = startIndex + 1;
+               checkIndex = checkIndex + 1;
+            }
+
+            if( ! alreadyVisitedRestaurant.contains(orderRestaurantLocation))
+            {
+                pathFromGapedOrders[startIndex] = orderRestaurantLocation;
+                alreadyVisitedRestaurant.add(orderRestaurantLocation);
+            }
+
+            if( alreadyVisitedCustomer.containsKey(orderCustomerLocation))
+            {
+                int alreadyPresentIndex = alreadyVisitedCustomer.get(orderCustomerLocation);
+                pathFromGapedOrders[alreadyPresentIndex] = null;
+            }
+
+            pathFromGapedOrders[checkIndex] = orderCustomerLocation;
+            alreadyVisitedCustomer.put(orderCustomerLocation,checkIndex);
+
+
+            startIndex = nextEmptyLocation(pathFromGapedOrders , startIndex);
+            if(startIndex<0)
+                break;
+        }
+
+        List<Location> pathFromGapedOrdersList = new ArrayList<Location>();
+        for(int j =0; j<pathFromGapedOrders.length; j++)
+        {
+            if(pathFromGapedOrders[j] != null)
+            {
+                pathFromGapedOrdersList.add(pathFromGapedOrders[j]);
+            }
+        }
+
+        return pathFromGapedOrdersList;
+    }
+
+    public int nextEmptyLocation(Location [] path, int startIndex)
+    {
+        int i;
+        for(i=startIndex; i<path.length; i++)
+        {
+            if(path[i] == null)
+                return i;
+        }
+        return -1;
+    }
+
+
 
 
 
