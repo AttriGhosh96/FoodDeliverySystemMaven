@@ -180,7 +180,7 @@ public class GeneratePopulation {
             int checkIndex = startIndex + gap +1;
 
 
-            while (!Objects.equals(pathFromGapedOrders[checkIndex], null))
+            while (!Objects.equals(pathFromGapedOrders[startIndex], null) || !Objects.equals(pathFromGapedOrders[checkIndex], null))
             {
                startIndex = startIndex + 1;
                checkIndex = checkIndex + 1;
@@ -207,6 +207,7 @@ public class GeneratePopulation {
                 break;
         }
 
+        //for removing null entries
         List<Location> pathFromGapedOrdersList = new ArrayList<Location>();
         for(int j =0; j<pathFromGapedOrders.length; j++)
         {
@@ -231,6 +232,22 @@ public class GeneratePopulation {
     }
 
 
+    //function to convert a list of location to a list of gaped order
+    public List<GapedOrder> getGapedOrderListFromPathList(List<Location> locationListForPath)
+    {
+        HashMap<GapedOrder,Integer> gapedOderFromLocation = new HashMap<GapedOrder, Integer>();
+        for(int i=0; i<locationListForPath.size(); i++)
+        {
+            if(locationListForPath.get(i).getLocationType().equals(Location.LocationType.RESTAURANT))
+            {
+                //String currentRestaurantIdNumber = locationListForPath.get(i).
+            }
+        }
+
+        return null;
+    }
+
+
 
 
 
@@ -242,29 +259,9 @@ public class GeneratePopulation {
         return null;
     }
 
-    //permutation function
-    public List<List<Order>> getPermutationOfSubList(List<Order> subListOfOriginalOrderList)
-    {
-        List<List<Order>> toBeReturnedListOfPermutation = new ArrayList<>();
-        Order firstOrder = subListOfOriginalOrderList.remove(0);
-        List<List<Order>> nextPermutation = getPermutationOfSubList(subListOfOriginalOrderList);
-        for(List<Order> onePermutation : nextPermutation)
-        {
-            for(int i=0; i<onePermutation.size(); i++)
-            {
-                List<Order> temp = new ArrayList<>(onePermutation);
-                temp.add(i, firstOrder);
-                toBeReturnedListOfPermutation.add(temp);
-            }
-        }
-        return toBeReturnedListOfPermutation;
-    }
 
-    //function to check relative ordering of customer and restaurant
-    public boolean checkRelativeOrderingCR(List<Order> orderList)
-    {
-        return true;
-    }
+
+
 
 
     public static void main(String args[])

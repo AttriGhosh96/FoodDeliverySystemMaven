@@ -1,14 +1,13 @@
 package com.xav;
 
+import com.google.common.collect.Collections2;
 import com.xav.pojo.Customer;
+import com.xav.pojo.GapedOrder;
 import com.xav.pojo.Location;
 import com.xav.pojo.Restaurant;
 import com.xav.receivedData.Order;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class POCInitialization {
 
@@ -127,12 +126,41 @@ public class POCInitialization {
         Order orderFour = new Order(allCustomer.get(3), allRestaurant.get(2));
 
 
+
         Set<Order> orderPlaced = new HashSet<Order>();
         orderPlaced.add(orderOne);
+        orderPlaced.add(orderFour);
         orderPlaced.add(orderTwo);
         orderPlaced.add(orderThree);
-        orderPlaced.add(orderFour);
 
         return orderPlaced;
+    }
+
+    public Set<List<GapedOrder>> getGapedOrders()
+    {
+
+        List<Customer> allCustomer = getCustomer();
+        List<Restaurant> allRestaurant = getRestaurant();
+
+        Order orderOne = new Order(allCustomer.get(0), allRestaurant.get(0));
+        Order orderTwo = new Order(allCustomer.get(1), allRestaurant.get(1));
+        Order orderThree = new Order(allCustomer.get(2), allRestaurant.get(0));
+        Order orderFour = new Order(allCustomer.get(3), allRestaurant.get(2));
+
+        GapedOrder gapedOrderOne = new GapedOrder(orderOne, 5);
+        GapedOrder gapedOrderTwo = new GapedOrder(orderTwo, 0);
+        GapedOrder gapedOrderThree = new GapedOrder(orderThree, 5);
+        GapedOrder gapedOrderFour = new GapedOrder(orderFour, 1);
+
+        List<GapedOrder> allGapedOrders = new ArrayList<GapedOrder>();
+        allGapedOrders.add(gapedOrderOne);
+        allGapedOrders.add(gapedOrderFour);
+        allGapedOrders.add(gapedOrderTwo);
+        allGapedOrders.add(gapedOrderThree);
+
+        Set<List<GapedOrder>> predefinedGapedOrder = new HashSet<>();
+        predefinedGapedOrder.add(allGapedOrders);
+
+        return predefinedGapedOrder;
     }
 }
