@@ -158,7 +158,7 @@ public class GeneratePopulation {
     }
 
     //converting gaped orders to list of locations(paths)
-    public List<Location> gapedOrderToPath(List<GapedOrder> gapedOrders)
+    public List<Location> gapedOrderListToLocationList(List<GapedOrder> gapedOrders)
     {
         int sumOfGaps=0;
         int maxSizeOfList;
