@@ -170,7 +170,7 @@ public class GeneratePopulation {
 
         Location [] pathFromGapedOrders = new Location[maxSizeOfList];
         int i, startIndex =0;
-        HashSet<Location> alreadyVisitedRestaurant = new HashSet<Location>();
+        HashMap<Location,Integer> alreadyVisitedRestaurant = new HashMap<Location,Integer>();
         HashMap<Location, Integer> alreadyVisitedCustomer = new HashMap<Location, Integer>();
         for(i=0; i<gapedOrders.size(); i++)
         {
@@ -180,22 +180,49 @@ public class GeneratePopulation {
             int checkIndex = startIndex + gap +1;
 
 
-            while (!Objects.equals(pathFromGapedOrders[startIndex], null) || !Objects.equals(pathFromGapedOrders[checkIndex], null))
-            {
-               startIndex = startIndex + 1;
-               checkIndex = checkIndex + 1;
-            }
 
-            if( ! alreadyVisitedRestaurant.contains(orderRestaurantLocation))
+            // restaurant e geche, customer e jayene
+            if(  alreadyVisitedRestaurant.containsKey(orderRestaurantLocation) && ! alreadyVisitedCustomer.containsKey(orderCustomerLocation))
             {
-                pathFromGapedOrders[startIndex] = orderRestaurantLocation;
-                alreadyVisitedRestaurant.add(orderRestaurantLocation);
-            }
+                checkIndex = alreadyVisitedRestaurant.get(orderRestaurantLocation) + gap + 1;
 
-            if( alreadyVisitedCustomer.containsKey(orderCustomerLocation))
-            {
+                while (!Objects.equals(pathFromGapedOrders[checkIndex], null))
+                {
+                    checkIndex = checkIndex + 1;
+                }
+
+            }
+            //restaurant e geche, customer eo geche
+            else if(  alreadyVisitedRestaurant.containsKey(orderRestaurantLocation) && alreadyVisitedCustomer.containsKey(orderCustomerLocation)){
+
+                while (!Objects.equals(pathFromGapedOrders[startIndex], null))
+                {
+                    startIndex = startIndex + 1;
+                }
+
+                // as we will be inserting customer at start index and the current gap will not matter.
+                checkIndex=startIndex;
+
                 int alreadyPresentIndex = alreadyVisitedCustomer.get(orderCustomerLocation);
                 pathFromGapedOrders[alreadyPresentIndex] = null;
+
+
+            }
+            // restaurant e jayene, customer e geche  +++   restaurant eo jayene, customer eo jayene
+            else {
+
+                while (!Objects.equals(pathFromGapedOrders[startIndex], null) || !Objects.equals(pathFromGapedOrders[checkIndex], null))
+                {
+                    startIndex = startIndex + 1;
+                    checkIndex = checkIndex + 1;
+                }
+
+                if (alreadyVisitedCustomer.containsKey(orderCustomerLocation)) {
+                    int alreadyPresentIndex = alreadyVisitedCustomer.get(orderCustomerLocation);
+                    pathFromGapedOrders[alreadyPresentIndex] = null;
+                }
+                alreadyVisitedRestaurant.put(orderRestaurantLocation,startIndex);
+                pathFromGapedOrders[startIndex] = orderRestaurantLocation;
             }
 
             pathFromGapedOrders[checkIndex] = orderCustomerLocation;
