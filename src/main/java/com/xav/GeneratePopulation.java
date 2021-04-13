@@ -1,5 +1,8 @@
 package com.xav;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import com.xav.mapQuest.routeMatrix.RouteMatrix;
 import com.xav.mapQuest.routeMatrix.RouteMatrixInterface;
 import com.xav.pojo.Customer;
@@ -132,15 +135,38 @@ public class GeneratePopulation {
         return null;
     }
 
+    void  check(int... varargs){
+
+    }
+
 
     //for generating gaped orders
     public Set<List<GapedOrder>> getGapedOrders(Set<Order> orders)
     {
-        Collection<List<Order>> orderPermutations = Collections2.permutations(orders);
+        //making combinations
+        Collection<List<Order>> orderCombinationsNPermutations  = new ArrayList<List<Order>>();
 
-        Set<List<GapedOrder>> gapedOrdersOfAllPermutations = new HashSet<List<GapedOrder>>();
+        ImmutableSet<Order> immutableSetOfOrders = ImmutableSet.copyOf(orders);
+        for(int combinationSize=1; combinationSize<=immutableSetOfOrders.size(); combinationSize++)
+        {
+            Set<Set<Order>> combinationsForCombinationSize = Sets.combinations(immutableSetOfOrders, combinationSize);
 
-        for (List<Order> orderPermutation : orderPermutations)
+            for(Set<Order> setOfCombination : combinationsForCombinationSize)
+            {
+                orderCombinationsNPermutations.addAll(Collections2.permutations(setOfCombination));
+            }
+
+        }
+
+        //creating all permutations of the order list received
+       // Collection<List<Order>> orderCombinationsNPermutations = Collections2.permutations(orders);
+
+
+
+        //for converting all generated permutations of the order list to gaped orders
+        Set<List<GapedOrder>> gapedOrdersOfAllCombinationsNPermutations = new HashSet<List<GapedOrder>>();
+
+        for (List<Order> orderPermutation : orderCombinationsNPermutations)
         {
             List<GapedOrder> gapedOrderOnePermutationList = new ArrayList<GapedOrder>();
             for(Order order : orderPermutation) //till with A
@@ -150,11 +176,11 @@ public class GeneratePopulation {
                 gapedOrderOnePermutationList.add(generatedGapedOrder);
 
             }
-            gapedOrdersOfAllPermutations.add(gapedOrderOnePermutationList);
+            gapedOrdersOfAllCombinationsNPermutations.add(gapedOrderOnePermutationList);
 
         }
 
-        return gapedOrdersOfAllPermutations;
+        return gapedOrdersOfAllCombinationsNPermutations;
     }
 
     //converting gaped orders to list of locations(paths)
@@ -259,19 +285,14 @@ public class GeneratePopulation {
     }
 
 
-    //function to convert a list of location to a list of gaped order
-    public List<GapedOrder> getGapedOrderListFromPathList(List<Location> locationListForPath)
+
+
+    //function for candidate creation
+    public List<Location> candidateCreation(List<List<GapedOrder>> allParentGapedOrderList)
     {
-        HashMap<GapedOrder,Integer> gapedOderFromLocation = new HashMap<GapedOrder, Integer>();
-        for(int i=0; i<locationListForPath.size(); i++)
-        {
-            if(locationListForPath.get(i).getLocationType().equals(Location.LocationType.RESTAURANT))
-            {
-                //String currentRestaurantIdNumber = locationListForPath.get(i).
-            }
-        }
 
         return null;
+
     }
 
 

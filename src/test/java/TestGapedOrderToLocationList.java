@@ -16,47 +16,37 @@ public class TestGapedOrderToLocationList {
         Set<Order> orders = new POCInitialization().getOrders();
 
         int validationCount = 0;
-        OrderMaps orderMaps = new OrderMaps();
-        orderMaps.updateOrderMaps(orders);
 
         //Set<List<GapedOrder>> gapedOrdersSet = new POCInitialization().getGapedOrders();
-        for (int iterator = 0; iterator<100;iterator++) {
+       for (int iterator = 0; iterator<1;iterator++) {
 
 
             Set<List<GapedOrder>> gapedOrdersSet = new GeneratePopulation().getGapedOrders(orders);
+            //trying out
+            //gapedOrdersSet.stream().forEach(gapedOrders -> System.out.println(gapedOrders));
 
             List<List<GapedOrder>> gapedOrdersList = gapedOrdersSet.stream().collect(Collectors.toList());
 
             for (List<GapedOrder> gapedOrders : gapedOrdersList) {
 
+                OrderMaps orderMaps = new OrderMaps();
+                orderMaps.updateOrderMaps(gapedOrders.stream().map(gapedOrder1->gapedOrder1.getOrder()).collect(Collectors.toSet()));
 
 
                 List<Location> originalPath = new GeneratePopulation().gapedOrderListToLocationList(gapedOrders);
+                //printing original path to check 24 permutations
+                //originalPath.stream().forEach(location -> {
+                 //   System.out.println(location);
+               // });
 
-
-                //checking for creation of multimaps
-                OrderMaps objectToCreateMultiMap = new OrderMaps();
-                objectToCreateMultiMap.updateOrderMaps(orders);
-       /* for (Customer customer: objectToCreateMultiMap.getCustomerToOrderMultimap().keySet()
-             ) {
-            System.out.println(customer + "-->" + objectToCreateMultiMap.getCustomerToOrderMultimap().get(customer));
-
-        }
-
-        for (Restaurant restaurant: objectToCreateMultiMap.getRestaurantToOrderMultimap().keySet()
-             ) {
-            System.out.println(restaurant + "-->" + objectToCreateMultiMap.getRestaurantToOrderMultimap().get(restaurant));
-
-        }*/
 
 
                 //checking the function for list of location to gaped orders
-                Multimap<Restaurant, Order> restaurantOrderMultimap = objectToCreateMultiMap.getRestaurantToOrderMultimap();
-                Multimap<Customer, Order> customerOrderMultimap = objectToCreateMultiMap.getCustomerToOrderMultimap();
-                List<Location> locationListForPath = new GeneratePopulation().gapedOrderListToLocationList(gapedOrders);
+               Multimap<Restaurant, Order> restaurantOrderMultimap = orderMaps.getRestaurantToOrderMultimap();
+               Multimap<Customer, Order> customerOrderMultimap = orderMaps.getCustomerToOrderMultimap();
 
 
-                List<GapedOrder> gapedOrderFromLocation = Utility.locationListToGapedOrderList(locationListForPath, restaurantOrderMultimap, customerOrderMultimap);
+                List<GapedOrder> gapedOrderFromLocation = Utility.locationListToGapedOrderList(originalPath, restaurantOrderMultimap, customerOrderMultimap);
 
                 List<Location> generatedPath = new GeneratePopulation().gapedOrderListToLocationList(gapedOrderFromLocation);
 
@@ -94,6 +84,8 @@ public class TestGapedOrderToLocationList {
             }
         }
         System.out.println("POC validated -> "+validationCount+" times");
+
+
     }
 
 }
