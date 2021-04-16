@@ -27,6 +27,16 @@ public class TestGapedOrderToLocationList {
 
             List<List<GapedOrder>> gapedOrdersList = gapedOrdersSet.stream().collect(Collectors.toList());
 
+            //checking candidate creation
+           List<List<GapedOrder>> selectedParents = new GeneratePopulation().selectParents(gapedOrdersList);
+           List<Location> newCandidate = new GeneratePopulation().candidateCreation(selectedParents);
+           System.out.println("New Candidate: ");
+           newCandidate.stream().forEach(candidateLocation ->{
+               System.out.println(candidateLocation);
+           });
+
+
+
             for (List<GapedOrder> gapedOrders : gapedOrdersList) {
 
                 OrderMaps orderMaps = new OrderMaps();

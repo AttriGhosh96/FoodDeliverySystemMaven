@@ -16,6 +16,8 @@ import java.util.stream.Collectors;
 
 public class GeneratePopulation {
 
+    private static final double SELECTION_CONSTANT = 0.3;
+
     private Set<Order> orders;
     private double [][] customerCustomerDistanceMatrix;
     private double [][] customerRestaurantDistanceMatrix;
@@ -284,6 +286,36 @@ public class GeneratePopulation {
         return -1;
     }
 
+    public List<List<GapedOrder>> selectParents(List<List<GapedOrder>> allParentGapedOrderList)
+    {
+        //for selecting three parents randomly
+        int randomOne = (int) ((allParentGapedOrderList.size()) * Math.random());
+        int randomTwo = (int) ((allParentGapedOrderList.size()) * Math.random());
+        int randomThree = (int) ((allParentGapedOrderList.size()) * Math.random());
+
+        List<List<GapedOrder>> selectedParents = new ArrayList<List<GapedOrder>>();
+
+        List<GapedOrder> parentOne = new ArrayList<GapedOrder>();
+        List<GapedOrder> parentTwo = new ArrayList<GapedOrder>();
+        List<GapedOrder> parentThree = new ArrayList<GapedOrder>();
+
+        if((randomOne != randomTwo) && (randomOne != randomThree))
+            selectedParents.add(allParentGapedOrderList.get(randomOne));
+        else
+            selectedParents.add(allParentGapedOrderList.get(randomOne - 1));
+
+        if((randomTwo != randomOne) && (randomTwo != randomThree))
+            selectedParents.add(allParentGapedOrderList.get(randomTwo));
+        else
+            selectedParents.add(allParentGapedOrderList.get(randomTwo - 1));
+
+        if((randomThree != randomOne) && (randomThree != randomTwo))
+            selectedParents.add(allParentGapedOrderList.get(randomThree));
+        else
+            selectedParents.add(allParentGapedOrderList.get(randomThree - 1));
+
+        return selectedParents;
+    }
 
 
 
@@ -291,7 +323,49 @@ public class GeneratePopulation {
     public List<Location> candidateCreation(List<List<GapedOrder>> allParentGapedOrderList)
     {
 
-        return null;
+
+        List<GapedOrder> newCandidateGapedOrder = new ArrayList<GapedOrder>();
+        Set<Order> alreadyConsideredOrders = new HashSet<Order>();
+
+
+//        //for selecting three parents randomly
+//        int randomOne = (int) ((allParentGapedOrderList.size()) * Math.random());
+//        int randomTwo = (int) ((allParentGapedOrderList.size()) * Math.random());
+//        int randomThree = (int) ((allParentGapedOrderList.size()) * Math.random());
+//
+//        if((randomOne != randomTwo) && (randomOne != randomThree))
+//            parentOne = allParentGapedOrderList.get(randomOne);
+//        else
+//            parentOne = allParentGapedOrderList.get(randomOne - 1);
+//
+//        if((randomTwo != randomOne) && (randomTwo != randomThree))
+//            parentTwo = allParentGapedOrderList.get(randomTwo);
+//        else
+//            parentTwo = allParentGapedOrderList.get(randomTwo - 1);
+//
+//        if((randomThree != randomOne) && (randomThree != randomTwo))
+//            parentThree = allParentGapedOrderList.get(randomThree);
+//        else
+//            parentThree = allParentGapedOrderList.get(randomThree - 1);
+
+
+        for(int i=0; i<allParentGapedOrderList.size(); i++)
+        {
+            List<GapedOrder> parent = allParentGapedOrderList.get(i);
+            for(GapedOrder gapedOrderOfParent : parent)
+            {
+                double orderSelectionDeterminant = Math.random();
+                if((orderSelectionDeterminant>SELECTION_CONSTANT) && (! alreadyConsideredOrders.contains(gapedOrderOfParent.getOrder())))
+                {
+                    newCandidateGapedOrder.add(gapedOrderOfParent);
+                    alreadyConsideredOrders.add(gapedOrderOfParent.getOrder());
+                }
+            }
+
+        }
+
+
+        return gapedOrderListToLocationList(newCandidateGapedOrder);
 
     }
 
