@@ -18,7 +18,6 @@ public class TestGapedOrderToLocationList {
 
         int validationCount = 0;
 
-        //Set<List<GapedOrder>> gapedOrdersSet = new POCInitialization().getGapedOrders();
        for (int iterator = 0; iterator<1; iterator++) {
 
 
@@ -43,24 +42,25 @@ public class TestGapedOrderToLocationList {
                 orderMaps.updateOrderMaps(gapedOrders.stream().map(gapedOrder1->gapedOrder1.getOrder()).collect(Collectors.toSet()));
 
 
-                List<Location> originalPath = new GeneratePopulation().gapedOrderListToLocationList(gapedOrders);
-                //printing original path to check 24 permutations
-                //originalPath.stream().forEach(location -> {
-                 //   System.out.println(location);
-               // });
-
+                List<Location> originalPath = new Utility().gapedOrderListToLocationList(gapedOrders);
 
 
                 //checking the function for list of location to gaped orders
                Multimap<Restaurant, Order> restaurantOrderMultimap = orderMaps.getRestaurantToOrderMultimap();
                Multimap<Customer, Order> customerOrderMultimap = orderMaps.getCustomerToOrderMultimap();
-               HashMap<Order, Double> orderToOrderValue = orderMaps.getOrderToOrderValueHashMap();
+               HashMap<Order, Double> orderToOrderValueHashMap = orderMaps.getOrderToOrderValueHashMap();
 
 
-                List<GapedOrder> gapedOrderFromLocation = Utility.locationListToGapedOrderList(originalPath, restaurantOrderMultimap, customerOrderMultimap, orderToOrderValue);
 
 
-                List<Location> generatedPath = new GeneratePopulation().gapedOrderListToLocationList(gapedOrderFromLocation);
+                List<GapedOrder> gapedOrderFromLocation = Utility.locationListToGapedOrderList(originalPath, restaurantOrderMultimap, customerOrderMultimap, orderToOrderValueHashMap);
+
+
+                List<Location> generatedPath = new Utility().gapedOrderListToLocationList(gapedOrderFromLocation);
+
+//                double totalOrderValue = Utility.getTotalOrderValue(generatedPath, restaurantOrderMultimap, customerOrderMultimap, orderToOrderValueHashMap);
+//                System.out.println(totalOrderValue);
+
 
                 boolean equals  = originalPath.equals(generatedPath);
 //                System.out.println(equals);

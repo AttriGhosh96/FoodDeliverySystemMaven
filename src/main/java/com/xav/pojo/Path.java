@@ -1,5 +1,7 @@
 package com.xav.pojo;
 
+import com.xav.Utility;
+
 import java.util.List;
 
 public class Path {
@@ -36,6 +38,7 @@ public class Path {
         this.pathMaps = pathMaps;
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -56,5 +59,16 @@ public class Path {
         return "ResultPath{" +
                 "path=" + pathLocations +
                 '}';
+    }
+
+
+    //to set Path
+    public void setPath()
+    {
+        //list of location is set
+        setPathLocations(Utility.gapedOrderListToLocationList(pathGapedOrders));
+
+
+
     }
 }

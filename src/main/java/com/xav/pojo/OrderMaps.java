@@ -41,6 +41,7 @@ public class OrderMaps {
         }
 
         //hashmap orderToOrder
+        orderToOrderValueHashMap = new HashMap<>();
         for(Order order : receivedOrders)
         {
             orderToOrderValueHashMap.put(order, order.getOrderValue());

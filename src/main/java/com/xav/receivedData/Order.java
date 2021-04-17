@@ -4,15 +4,17 @@ import com.xav.pojo.Customer;
 import com.xav.pojo.Restaurant;
 
 public class Order {
+
+
+   private Customer customer;
+   private Restaurant restaurant;
+   private double orderValue;
+
    public Order(Customer customer, Restaurant restaurant, double orderValue) {
       this.customer = customer;
       this.restaurant = restaurant;
       this.orderValue = orderValue;
    }
-
-   private Customer customer;
-   private Restaurant restaurant;
-   private double orderValue;
 
    public double getOrderValue() {
       return orderValue;
@@ -67,6 +69,7 @@ public class Order {
       return "Order{" +
               "customer=" + customer +
               ", restaurant=" + restaurant +
+              ", orderValue=" + orderValue +
               '}';
    }
 }

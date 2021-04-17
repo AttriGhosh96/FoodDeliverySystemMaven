@@ -125,18 +125,127 @@ public class Utility {
 
     }
 
+
+    //converting gaped orders to list of locations(paths)
+    public static List<Location> gapedOrderListToLocationList(List<GapedOrder> gapedOrders)
+    {
+        int sumOfGaps=0;
+        int maxSizeOfList;
+        for(GapedOrder gapedOrder : gapedOrders)
+        {
+            sumOfGaps += gapedOrder.getGap();
+        }
+        maxSizeOfList = sumOfGaps + 2*gapedOrders.size();
+
+        Location [] pathFromGapedOrders = new Location[maxSizeOfList];
+        int i, startIndex =0;
+        HashMap<Location,Integer> alreadyVisitedRestaurant = new HashMap<Location,Integer>();
+        HashMap<Location, Integer> alreadyVisitedCustomer = new HashMap<Location, Integer>();
+        for(i=0; i<gapedOrders.size(); i++)
+        {
+            int gap = gapedOrders.get(i).getGap();
+            Location orderRestaurantLocation = gapedOrders.get(i).getOrder().getRestaurant().getRestaurantLocation();
+            Location orderCustomerLocation = gapedOrders.get(i).getOrder().getCustomer().getCustomerLocation();
+            int checkIndex = startIndex + gap +1;
+
+
+
+            // restaurant e geche, customer e jayene
+            if(  alreadyVisitedRestaurant.containsKey(orderRestaurantLocation) && ! alreadyVisitedCustomer.containsKey(orderCustomerLocation))
+            {
+                checkIndex = alreadyVisitedRestaurant.get(orderRestaurantLocation) + gap + 1;
+
+                while (!Objects.equals(pathFromGapedOrders[checkIndex], null))
+                {
+                    checkIndex = checkIndex + 1;
+                }
+
+            }
+            //restaurant e geche, customer eo geche
+            else if(  alreadyVisitedRestaurant.containsKey(orderRestaurantLocation) && alreadyVisitedCustomer.containsKey(orderCustomerLocation)){
+
+                while (!Objects.equals(pathFromGapedOrders[startIndex], null))
+                {
+                    startIndex = startIndex + 1;
+                }
+
+                // as we will be inserting customer at start index and the current gap will not matter.
+                checkIndex=startIndex;
+
+                int alreadyPresentIndex = alreadyVisitedCustomer.get(orderCustomerLocation);
+                pathFromGapedOrders[alreadyPresentIndex] = null;
+
+
+            }
+            // restaurant e jayene, customer e geche  +++   restaurant eo jayene, customer eo jayene
+            else {
+
+                while (!Objects.equals(pathFromGapedOrders[startIndex], null) || !Objects.equals(pathFromGapedOrders[checkIndex], null))
+                {
+                    startIndex = startIndex + 1;
+                    checkIndex = checkIndex + 1;
+                }
+
+                if (alreadyVisitedCustomer.containsKey(orderCustomerLocation)) {
+                    int alreadyPresentIndex = alreadyVisitedCustomer.get(orderCustomerLocation);
+                    pathFromGapedOrders[alreadyPresentIndex] = null;
+                }
+                alreadyVisitedRestaurant.put(orderRestaurantLocation,startIndex);
+                pathFromGapedOrders[startIndex] = orderRestaurantLocation;
+            }
+
+            pathFromGapedOrders[checkIndex] = orderCustomerLocation;
+            alreadyVisitedCustomer.put(orderCustomerLocation,checkIndex);
+
+
+            startIndex = nextEmptyLocation(pathFromGapedOrders , startIndex);
+            if(startIndex<0)
+                break;
+        }
+
+        //for removing null entries
+        List<Location> pathFromGapedOrdersList = new ArrayList<Location>();
+        for(int j =0; j<pathFromGapedOrders.length; j++)
+        {
+            if(pathFromGapedOrders[j] != null)
+            {
+                pathFromGapedOrdersList.add(pathFromGapedOrders[j]);
+            }
+        }
+
+        return pathFromGapedOrdersList;
+    }
+
+    public static int nextEmptyLocation(Location[] path, int startIndex)
+    {
+        int i;
+        for(i=startIndex; i<path.length; i++)
+        {
+            if(path[i] == null)
+                return i;
+        }
+        return -1;
+    }
+
+
+    //for printing the details of gaped order
     public static String formatToPrintGapedOrder(GapedOrder order){
         return "Restaurant-"+order.getOrder().getRestaurant().getRestaurantId()+" Customer-"+order.getOrder().getCustomer().getCustomerId()+" gap="+order.getGap() ;
     }
 
     //function to calculate the total sales amount(order value) for a trip(List<Location>)
-    public double getTotalOrderValue(List<Location> tripPathLocationList)
+    public static double getTotalOrderValue(List<Location> tripPathLocationList, Multimap<Restaurant, Order> restaurantOrderMultimap, Multimap<Customer, Order> customerOrderMultimap, HashMap<Order, Double> orderToOrderValueHashMap)
     {
+        double totalOrderValue = 0;
 
         List<GapedOrder> generatedGapedOrderForTripPathLocationList = new ArrayList<GapedOrder>();
+        generatedGapedOrderForTripPathLocationList = locationListToGapedOrderList(tripPathLocationList, restaurantOrderMultimap, customerOrderMultimap, orderToOrderValueHashMap);
+        for(GapedOrder gapedOrder : generatedGapedOrderForTripPathLocationList)
+        {
+            totalOrderValue += gapedOrder.getOrder().getOrderValue();
+        }
 
-
-        return 0.0;
+        return totalOrderValue;
     }
 
 
