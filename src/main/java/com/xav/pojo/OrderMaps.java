@@ -4,6 +4,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.xav.receivedData.Order;
 
+import java.util.HashMap;
 import java.util.Set;
 
 public class OrderMaps {
@@ -13,8 +14,17 @@ public class OrderMaps {
 
     private Multimap<Customer,Order> customerToOrderMultimap;
     private Multimap<Restaurant,Order> restaurantToOrderMultimap;
+    private HashMap<Order, Double> orderToOrderValueHashMap;
 
-    public void updateOrderMaps( Set<Order> receivedOrders){
+    public HashMap<Order, Double> getOrderToOrderValueHashMap() {
+        return orderToOrderValueHashMap;
+    }
+
+    public void setOrderToOrderValueHashMap(HashMap<Order, Double> orderToOrderValueHashMap) {
+        this.orderToOrderValueHashMap = orderToOrderValueHashMap;
+    }
+
+    public void updateOrderMaps(Set<Order> receivedOrders){
         this.orders = receivedOrders;
         // customer multimap creation
         customerToOrderMultimap = ArrayListMultimap.create();
@@ -28,6 +38,13 @@ public class OrderMaps {
         for(Order order : receivedOrders)
         {
             restaurantToOrderMultimap.put(order.getRestaurant(), order);
+        }
+
+        //hashmap orderToOrder
+        for(Order order : receivedOrders)
+        {
+            orderToOrderValueHashMap.put(order, order.getOrderValue());
+
         }
 
     }

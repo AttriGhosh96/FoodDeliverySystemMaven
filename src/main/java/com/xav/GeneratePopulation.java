@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 public class GeneratePopulation {
 
-    private static final double SELECTION_CONSTANT = 0.3;
+    private static final double SELECTION_CONSTANT = 0.4;
 
     private Set<Order> orders;
     private double [][] customerCustomerDistanceMatrix;
@@ -37,23 +37,16 @@ public class GeneratePopulation {
         initialisation();
     }
 
+
+
+
+
     public void initialisation() {
         POCInitialization pocObj = new POCInitialization();
         orders = pocObj.getOrders();
 
 
 
-        //customerCustomerDistanceMatrix = new double[noOfUniqueCustomers][noOfUniqueCustomers];
-        // when API will be called it will be called with a list of locations
-
-        //customerCustomerDistanceMatrix =new double [][] {{0, 1.115, 1.255, 1.755},
-//                                                        {0.859, 0, 1.622, 1.001},
-//                                                        {1.519, 1.903, 0, 2.395},
-//                                                        {1.169, 0.727, 2.21, 0}};
-//
-//        //restaurantRestaurantDistanceMatrix = new double[][]{{0, 2.874, 3.212},
-//                                                            {2.809, 0, 3.543},
-//                                                            {2.149, 2.694, 0}};
 
         List<Location> customerThenRestaurants =  new ArrayList<>();
         routeMatrix = new RouteMatrix();
@@ -74,15 +67,10 @@ public class GeneratePopulation {
         restaurantRestaurantDistanceMatrix = Utility.extractSubArray(allToAll, noOfUniqueCustomers, (noOfUniqueCustomers + noOfUniqueRestaurants)-1, noOfUniqueCustomers, (noOfUniqueCustomers + noOfUniqueRestaurants)-1 );
         customerRestaurantDistanceMatrix = Utility.extractSubArray(allToAll, 0, noOfUniqueCustomers-1, noOfUniqueCustomers, (noOfUniqueCustomers + noOfUniqueRestaurants)-1);
 
-       /* System.out.println("Customer-Customer");
-        display(customerCustomerDistanceMatrix);
-        System.out.println("Restaurant-Restaurant");
-        display(restaurantRestaurantDistanceMatrix);
-        System.out.println("Customer-Restaurant");
-        display(customerRestaurantDistanceMatrix);*/
 
 
     }
+
 
 
 
@@ -123,26 +111,33 @@ public class GeneratePopulation {
     }
 
     //creation of initial population
-    public List<List<Location>> createInitialPopulation()
+    public Set<List<Location>> createInitialPopulation()
     {
 
-        Set<Set<Order>> allSubsetOrder = new HashSet<Set<Order>>();
-        allSubsetOrder = Utility.getAllSubset(orders); // till with A
-        for(Set<Order> oneSubsetOrder : allSubsetOrder) //have to check
+        Set<List<GapedOrder>> gapedOrdersSet = getGapedOrders(orders);
+
+        Set<List<Location>> gapedOrderListToLocationList = new HashSet<>();
+
+        for(List<GapedOrder> singleGapedOrder : gapedOrdersSet)
         {
-            getGapedOrders(oneSubsetOrder);
+            List<Location> singleGapedOrderListToLocationList = gapedOrderListToLocationList(singleGapedOrder);
+            gapedOrderListToLocationList.add(singleGapedOrderListToLocationList);
         }
 
 
-        return null;
+        return gapedOrderListToLocationList;
     }
 
-    void  check(int... varargs){
-
-    }
+    //
 
 
     //for generating gaped orders
+
+    /**
+     *
+     * @param orders
+     * @return set of all combination and permutation of orders-> gapedorders
+     */
     public Set<List<GapedOrder>> getGapedOrders(Set<Order> orders)
     {
         //making combinations
@@ -286,6 +281,7 @@ public class GeneratePopulation {
         return -1;
     }
 
+    //selecting parents for candidate creation
     public List<List<GapedOrder>> selectParents(List<List<GapedOrder>> allParentGapedOrderList)
     {
         //for selecting three parents randomly
@@ -323,30 +319,15 @@ public class GeneratePopulation {
     public List<Location> candidateCreation(List<List<GapedOrder>> allParentGapedOrderList)
     {
 
+        allParentGapedOrderList.stream().forEach(parent-> {
+            System.out.println("-----------------------\n");
+            parent.stream().forEach(gapedOrder-> System.out.println(Utility.formatToPrintGapedOrder(gapedOrder)));
+        });
+
+        System.out.println("-----------------------\n");
 
         List<GapedOrder> newCandidateGapedOrder = new ArrayList<GapedOrder>();
         Set<Order> alreadyConsideredOrders = new HashSet<Order>();
-
-
-//        //for selecting three parents randomly
-//        int randomOne = (int) ((allParentGapedOrderList.size()) * Math.random());
-//        int randomTwo = (int) ((allParentGapedOrderList.size()) * Math.random());
-//        int randomThree = (int) ((allParentGapedOrderList.size()) * Math.random());
-//
-//        if((randomOne != randomTwo) && (randomOne != randomThree))
-//            parentOne = allParentGapedOrderList.get(randomOne);
-//        else
-//            parentOne = allParentGapedOrderList.get(randomOne - 1);
-//
-//        if((randomTwo != randomOne) && (randomTwo != randomThree))
-//            parentTwo = allParentGapedOrderList.get(randomTwo);
-//        else
-//            parentTwo = allParentGapedOrderList.get(randomTwo - 1);
-//
-//        if((randomThree != randomOne) && (randomThree != randomTwo))
-//            parentThree = allParentGapedOrderList.get(randomThree);
-//        else
-//            parentThree = allParentGapedOrderList.get(randomThree - 1);
 
 
         for(int i=0; i<allParentGapedOrderList.size(); i++)
@@ -355,8 +336,9 @@ public class GeneratePopulation {
             for(GapedOrder gapedOrderOfParent : parent)
             {
                 double orderSelectionDeterminant = Math.random();
-                if((orderSelectionDeterminant>SELECTION_CONSTANT) && (! alreadyConsideredOrders.contains(gapedOrderOfParent.getOrder())))
+                if((orderSelectionDeterminant<=SELECTION_CONSTANT) && (! alreadyConsideredOrders.contains(gapedOrderOfParent.getOrder())))
                 {
+                    System.out.println("Picking -> "+Utility.formatToPrintGapedOrder(gapedOrderOfParent)+" of "+i+"th parent");
                     newCandidateGapedOrder.add(gapedOrderOfParent);
                     alreadyConsideredOrders.add(gapedOrderOfParent.getOrder());
                 }
@@ -368,6 +350,8 @@ public class GeneratePopulation {
         return gapedOrderListToLocationList(newCandidateGapedOrder);
 
     }
+
+
 
 
 

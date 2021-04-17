@@ -5,6 +5,7 @@ import com.xav.Utility;
 import com.xav.pojo.*;
 import com.xav.receivedData.Order;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -18,12 +19,11 @@ public class TestGapedOrderToLocationList {
         int validationCount = 0;
 
         //Set<List<GapedOrder>> gapedOrdersSet = new POCInitialization().getGapedOrders();
-       for (int iterator = 0; iterator<1;iterator++) {
+       for (int iterator = 0; iterator<1; iterator++) {
 
 
             Set<List<GapedOrder>> gapedOrdersSet = new GeneratePopulation().getGapedOrders(orders);
-            //trying out
-            //gapedOrdersSet.stream().forEach(gapedOrders -> System.out.println(gapedOrders));
+
 
             List<List<GapedOrder>> gapedOrdersList = gapedOrdersSet.stream().collect(Collectors.toList());
 
@@ -54,46 +54,48 @@ public class TestGapedOrderToLocationList {
                 //checking the function for list of location to gaped orders
                Multimap<Restaurant, Order> restaurantOrderMultimap = orderMaps.getRestaurantToOrderMultimap();
                Multimap<Customer, Order> customerOrderMultimap = orderMaps.getCustomerToOrderMultimap();
+               HashMap<Order, Double> orderToOrderValue = orderMaps.getOrderToOrderValueHashMap();
 
 
-                List<GapedOrder> gapedOrderFromLocation = Utility.locationListToGapedOrderList(originalPath, restaurantOrderMultimap, customerOrderMultimap);
+                List<GapedOrder> gapedOrderFromLocation = Utility.locationListToGapedOrderList(originalPath, restaurantOrderMultimap, customerOrderMultimap, orderToOrderValue);
+
 
                 List<Location> generatedPath = new GeneratePopulation().gapedOrderListToLocationList(gapedOrderFromLocation);
 
                 boolean equals  = originalPath.equals(generatedPath);
-                System.out.println(equals);
+//                System.out.println(equals);
                 validationCount++;
-                if(!equals){
-
-                    System.out.println(gapedOrders);
-                    System.out.println();
-                    System.out.println("Original");
-
-
-                    //original
-                    originalPath.stream().forEach(location -> {
-                        System.out.println(location);
-                    });
-
-
-
-                    System.out.println("Checking Location List to Gaped Order");
-                    System.out.println(gapedOrderFromLocation);
-
-
-
-                    System.out.println();
-                    System.out.println("Generated");
-                    //generated
-                    generatedPath.stream().forEach(location -> {
-                        System.out.println(location);
-                    });
-
-                }
+//                if(!equals){
+//
+//                    System.out.println(gapedOrders);
+//                    System.out.println();
+//                    System.out.println("Original");
+//
+//
+//                    //original
+//                    originalPath.stream().forEach(location -> {
+//                        System.out.println(location);
+//                    });
+//
+//
+//
+//                    System.out.println("Checking Location List to Gaped Order");
+//                    System.out.println(gapedOrderFromLocation);
+//
+//
+//
+//                    System.out.println();
+//                    System.out.println("Generated");
+//                    //generated
+//                    generatedPath.stream().forEach(location -> {
+//                        System.out.println(location);
+//                    });
+//
+//                }
 
             }
         }
-        System.out.println("POC validated -> "+validationCount+" times");
+ //       System.out.println("POC validated -> "+validationCount+" times");
 
 
     }

@@ -4,8 +4,23 @@ import com.xav.pojo.Customer;
 import com.xav.pojo.Restaurant;
 
 public class Order {
+   public Order(Customer customer, Restaurant restaurant, double orderValue) {
+      this.customer = customer;
+      this.restaurant = restaurant;
+      this.orderValue = orderValue;
+   }
+
    private Customer customer;
    private Restaurant restaurant;
+   private double orderValue;
+
+   public double getOrderValue() {
+      return orderValue;
+   }
+
+   public void setOrderValue(double orderValue) {
+      this.orderValue = orderValue;
+   }
 
    public Customer getCustomer() {
       return customer;
@@ -23,11 +38,6 @@ public class Order {
       this.restaurant = restaurant;
    }
 
-   public Order(Customer customer, Restaurant restaurant) {
-      this.customer = customer;
-      this.restaurant = restaurant;
-   }
-
    @Override
    public boolean equals(Object o) {
       if (this == o) return true;
@@ -35,16 +45,21 @@ public class Order {
 
       Order order = (Order) o;
 
-      if (getCustomer() != null ? !getCustomer().equals(order.getCustomer()) : order.getCustomer() != null)
-         return false;
-      return getRestaurant() != null ? getRestaurant().equals(order.getRestaurant()) : order.getRestaurant() == null;
+      if (!getCustomer().equals(order.getCustomer())) return false;
+      return getRestaurant().equals(order.getRestaurant());
    }
 
    @Override
    public int hashCode() {
-      int result = getCustomer() != null ? getCustomer().hashCode() : 0;
-      result = 31 * result + (getRestaurant() != null ? getRestaurant().hashCode() : 0);
+      int result = getCustomer().hashCode();
+      result = 31 * result + getRestaurant().hashCode();
       return result;
+   }
+
+   public Order(Customer customer, Restaurant restaurant) {
+      this.customer = customer;
+      this.restaurant = restaurant;
+      this.orderValue = 0.0;
    }
 
    @Override

@@ -2,10 +2,7 @@ package com.xav;
 
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
-import com.xav.pojo.Customer;
-import com.xav.pojo.GapedOrder;
-import com.xav.pojo.Location;
-import com.xav.pojo.Restaurant;
+import com.xav.pojo.*;
 import com.xav.receivedData.Order;
 
 import java.util.*;
@@ -43,7 +40,7 @@ public class Utility {
     }
 
     //location to gapedorder
-    public static List<GapedOrder> locationListToGapedOrderList(List<Location> locationList, Multimap<Restaurant, Order> restaurantOrderMultimap, Multimap<Customer,Order> customerOrderMultimap)
+    public static List<GapedOrder> locationListToGapedOrderList(List<Location> locationList, Multimap<Restaurant, Order> restaurantOrderMultimap, Multimap<Customer,Order> customerOrderMultimap, HashMap<Order, Double> orderToOrderValueHashMap)
     {
         HashMap<GapedOrder, Integer> gapedOrderIndexOfRestaurantHashMap = new HashMap<GapedOrder, Integer>(); //stores the gaped order with gap=-1, when restaurant is found and Integer value = index of restaurant
         List<GapedOrder> gapedOrderListForLocationList = new ArrayList<GapedOrder>(); //will return this final list
@@ -111,6 +108,13 @@ public class Utility {
                     }
                 }
 
+                //populating orderValue
+                for(GapedOrder generatedGapedOrder : gapedOrderListForLocationList)
+                {
+                    double correctOrderValue = orderToOrderValueHashMap.get(generatedGapedOrder.getOrder());
+                    generatedGapedOrder.getOrder().setOrderValue(correctOrderValue);
+                }
+
 
 
             }
@@ -119,6 +123,30 @@ public class Utility {
 
         return gapedOrderListForLocationList;
 
+    }
+
+    public static String formatToPrintGapedOrder(GapedOrder order){
+        return "Restaurant-"+order.getOrder().getRestaurant().getRestaurantId()+" Customer-"+order.getOrder().getCustomer().getCustomerId()+" gap="+order.getGap() ;
+    }
+
+    //function to calculate the total sales amount(order value) for a trip(List<Location>)
+    public double getTotalOrderValue(List<Location> tripPathLocationList)
+    {
+
+        List<GapedOrder> generatedGapedOrderForTripPathLocationList = new ArrayList<GapedOrder>();
+
+
+        return 0.0;
+    }
+
+
+
+    //function to calculate the total distance of the trip(List<Location>)
+    public double getTotalDistanceOfTrip(List<Location> tripPath)
+    {
+
+
+        return 0.0;
     }
 
 

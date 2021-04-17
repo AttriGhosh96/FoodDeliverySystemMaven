@@ -1,12 +1,12 @@
 package com.xav.trip;
 
-import com.xav.pojo.ResultPath;
+import com.xav.pojo.Path;
 
 public class TripDetails {
 
-    ResultPath path;
+    Path path;
 
-    public TripDetails(ResultPath path){
+    public TripDetails(Path path){
         //todo
     }
 

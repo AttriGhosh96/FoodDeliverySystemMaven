@@ -115,15 +115,28 @@ public class POCInitialization {
         return allRestaurant;
     }
 
+    //orderValue
+    public List<Double> getOrderValue()
+    {
+        List<Double> allOrderValues = new ArrayList<Double>();
+
+        allOrderValues.add(530.0);
+        allOrderValues.add(635.25);
+        allOrderValues.add(270.0);
+        allOrderValues.add(442.50);
+
+        return allOrderValues;
+    }
+
     public Set<Order> getOrders()
     {
         List<Customer> allCustomer = getCustomer();
         List<Restaurant> allRestaurant = getRestaurant();
 
-        Order orderOne = new Order(allCustomer.get(0), allRestaurant.get(0));
-        Order orderTwo = new Order(allCustomer.get(1), allRestaurant.get(1));
-        Order orderThree = new Order(allCustomer.get(2), allRestaurant.get(0));
-        Order orderFour = new Order(allCustomer.get(3), allRestaurant.get(2));
+        Order orderOne = new Order(allCustomer.get(0), allRestaurant.get(0), getOrderValue().get(0));
+        Order orderTwo = new Order(allCustomer.get(1), allRestaurant.get(1), getOrderValue().get(1));
+        Order orderThree = new Order(allCustomer.get(2), allRestaurant.get(0), getOrderValue().get(2));
+        Order orderFour = new Order(allCustomer.get(3), allRestaurant.get(2), getOrderValue().get(3));
 
 
 
