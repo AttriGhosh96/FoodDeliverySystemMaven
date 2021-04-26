@@ -5,9 +5,14 @@ import com.google.common.collect.Sets;
 import com.xav.pojo.*;
 import com.xav.receivedData.Order;
 
+import java.io.IOException;
 import java.util.*;
 
 public class Utility {
+
+
+    public static final double MAX_PREPARATION_TIME_AT_RESTAURANT = 10.0 * 60; // seconds
+    public static final double MAX_HANDOVER_TIME_AT_RESTAURANT = 2.0 * 60; // seconds
 
     //to get the distance matrixs
     public static double[][] extractSubArray(double[][] array, int startIndexRow, int endIndexRow, int startIndexCol, int endIndexCol)
@@ -46,8 +51,6 @@ public class Utility {
         List<GapedOrder> gapedOrderListForLocationList = new ArrayList<GapedOrder>(); //will return this final list
         for(int i=0; i<locationList.size(); i++)
         {
-            /*if(locationList.get(i) == null)
-                continue;*/
             if(locationList.get(i).getLocationType() == Location.LocationType.RESTAURANT)
             {
                 double restaurantInListLatitude = locationList.get(i).getLatitude();
@@ -233,30 +236,48 @@ public class Utility {
         return "Restaurant-"+order.getOrder().getRestaurant().getRestaurantId()+" Customer-"+order.getOrder().getCustomer().getCustomerId()+" gap="+order.getGap() ;
     }
 
-    //function to calculate the total sales amount(order value) for a trip(List<Location>)
-    public static double getTotalOrderValue(List<Location> tripPathLocationList, Multimap<Restaurant, Order> restaurantOrderMultimap, Multimap<Customer, Order> customerOrderMultimap, HashMap<Order, Double> orderToOrderValueHashMap)
+
+    //function for dominance test(pareto solution)
+    public boolean checkDominance(Path singleParent, Path candidate) throws IOException //returns true if candidate dominates parent
     {
-        double totalOrderValue = 0;
+        //flags for comparing parent and candidate
+        int orderValue = 0;
+        int totalDistance = 0;
+        int totalTime = 0;
 
-        List<GapedOrder> generatedGapedOrderForTripPathLocationList = new ArrayList<GapedOrder>();
-        generatedGapedOrderForTripPathLocationList = locationListToGapedOrderList(tripPathLocationList, restaurantOrderMultimap, customerOrderMultimap, orderToOrderValueHashMap);
-        for(GapedOrder gapedOrder : generatedGapedOrderForTripPathLocationList)
-        {
-            totalOrderValue += gapedOrder.getOrder().getOrderValue();
-        }
+        boolean strictlyBetter = false;
+        boolean noWorse = false;
 
-        return totalOrderValue;
+        //comparing strictly better
+        if(candidate.getTotalOrderValue() > singleParent.getTotalOrderValue())
+            orderValue = 1; //candidate is strictly better than parent
+        if(candidate.getTotalDistance() < singleParent.getTotalDistance())
+            totalDistance = 1; //candidate is strictly better than parent
+        if(candidate.getTotalTime() < singleParent.getTotalTime())
+            totalTime = 1; //candidate is strictly better than parent
+
+        if(orderValue == 1 || totalDistance == 1 || totalTime == 1)
+            strictlyBetter = true;
+
+
+        //comparing no worse
+        if(candidate.getTotalOrderValue() >= singleParent.getTotalOrderValue())
+            orderValue = 2; //candidate is no worse than parent
+        if(candidate.getTotalDistance() <= singleParent.getTotalDistance())
+            totalDistance = 2; //candidate is no worse than parent
+        if(candidate.getTotalTime() <= singleParent.getTotalTime())
+            totalTime = 2; //candidate is no worse than parent
+
+        if(orderValue == 2 && totalDistance == 2 && totalTime == 2)
+            noWorse = true;
+
+        //checking dominance
+        if(strictlyBetter && noWorse)
+            return true; //candidate dominates parent
+
+
+
+        return false; //parent dominates candidate
     }
-
-
-
-    //function to calculate the total distance of the trip(List<Location>)
-    public double getTotalDistanceOfTrip(List<Location> tripPath)
-    {
-
-
-        return 0.0;
-    }
-
 
 }

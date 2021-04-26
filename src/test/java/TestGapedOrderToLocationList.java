@@ -21,18 +21,18 @@ public class TestGapedOrderToLocationList {
        for (int iterator = 0; iterator<1; iterator++) {
 
 
-            Set<List<GapedOrder>> gapedOrdersSet = new GeneratePopulation().getGapedOrders(orders);
+            Set<List<GapedOrder>> gapedOrdersSet = GeneratePopulation.getGeneratePopulationInstance().getGapedOrders(orders);
 
 
             List<List<GapedOrder>> gapedOrdersList = gapedOrdersSet.stream().collect(Collectors.toList());
 
             //checking candidate creation
-           List<List<GapedOrder>> selectedParents = new GeneratePopulation().selectParents(gapedOrdersList);
-           List<Location> newCandidate = new GeneratePopulation().candidateCreation(selectedParents);
-           System.out.println("New Candidate: ");
-           newCandidate.stream().forEach(candidateLocation ->{
-               System.out.println(candidateLocation);
-           });
+//           List<List<GapedOrder>> selectedParents = new GeneratePopulation().selectParents(gapedOrdersList);
+//           List<Location> newCandidate = new GeneratePopulation().candidateCreation(selectedParents);
+//           System.out.println("New Candidate: ");
+//           newCandidate.stream().forEach(candidateLocation ->{
+//               System.out.println(candidateLocation);
+//           });
 
 
 

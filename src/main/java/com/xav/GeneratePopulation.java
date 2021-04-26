@@ -1,6 +1,5 @@
 package com.xav;
 import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import com.xav.mapQuest.routeMatrix.RouteMatrix;
@@ -8,29 +7,62 @@ import com.xav.mapQuest.routeMatrix.RouteMatrixInterface;
 import com.xav.pojo.*;
 import com.xav.receivedData.Order;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class GeneratePopulation {
 
+
+
     private static final double SELECTION_CONSTANT = 0.4;
 
+    private static GeneratePopulation generatePopulationObject;
+
+    static {
+        try {
+            generatePopulationObject = new GeneratePopulation();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static GeneratePopulation  getGeneratePopulationInstance(){
+        return  generatePopulationObject;
+    }
+
     private Set<Order> orders;
+    private double [][] allToAllDistanceMatrix;
+    private double [][] allToAllTimeMatrix;
+
+    public double[][] getAllToAllDistanceMatrix() {
+        return allToAllDistanceMatrix;
+    }
+
+    public double[][] getAllToAllTimeMatrix() {
+        return allToAllTimeMatrix;
+    }
+
+    public Map<Location, Integer> getLocationIndexMap() {
+        return locationIndexMap;
+    }
+
+    private Map<Location, Integer> locationIndexMap;
     private double [][] customerCustomerDistanceMatrix;
     private double [][] customerRestaurantDistanceMatrix;
     private double [][] restaurantRestaurantDistanceMatrix;
     private RouteMatrixInterface routeMatrix;
 
-    public GeneratePopulation(Set<Order> orders, double[][] customerCustomerDistanceMatrix, double[][] customerRestaurantDistanceMatrix, double[][] restaurantRestaurantDistanceMatrix) {
-        //todo add routematrix
-        this.orders = orders;
+//    public GeneratePopulation(Set<Order> orders, double[][] customerCustomerDistanceMatrix, double[][] customerRestaurantDistanceMatrix, double[][] restaurantRestaurantDistanceMatrix) {
+//        //todo add routematrix
+//        this.orders = orders;
+//
+//        this.customerCustomerDistanceMatrix = customerCustomerDistanceMatrix;
+//        this.customerRestaurantDistanceMatrix = customerRestaurantDistanceMatrix;
+//        this.restaurantRestaurantDistanceMatrix = restaurantRestaurantDistanceMatrix;
+//    }
 
-        this.customerCustomerDistanceMatrix = customerCustomerDistanceMatrix;
-        this.customerRestaurantDistanceMatrix = customerRestaurantDistanceMatrix;
-        this.restaurantRestaurantDistanceMatrix = restaurantRestaurantDistanceMatrix;
-    }
-
-    public GeneratePopulation() {
+    private GeneratePopulation() throws IOException {
         initialisation();
     }
 
@@ -38,7 +70,7 @@ public class GeneratePopulation {
 
 
 
-    public void initialisation() {
+    public void initialisation() throws IOException {
         POCInitialization pocObj = new POCInitialization();
         orders = pocObj.getOrders();
 
@@ -51,22 +83,60 @@ public class GeneratePopulation {
         Set<Customer> allUniqueCustomer = getUniqueCustomers();
         Set<Restaurant> allUniqueRestaurant = getUniqueRestaurants();
 
+        List<Customer> allUniqueCustomerList = allUniqueCustomer.stream().collect(Collectors.toList());
+        List<Restaurant> allUniqueRestaurantList = allUniqueRestaurant.stream().collect(Collectors.toList());
+
+        Map<Location , Integer> locationIndexMap = new HashMap<Location , Integer>();
+
+        int index = 0;
+        for(Customer customer:allUniqueCustomerList){
+            locationIndexMap.put(customer.getCustomerLocation() , index);
+            customerThenRestaurants.add(index , customer.getCustomerLocation());
+            index++;
+        }
+
+        for(Restaurant restaurant: allUniqueRestaurantList){
+            locationIndexMap.put(restaurant.getRestaurantLocation(),index);
+            customerThenRestaurants.add(index , restaurant.getRestaurantLocation());
+            index++;
+        }
+
+
+
         //matrix
         int noOfUniqueCustomers = allUniqueCustomer.size();
         int noOfUniqueRestaurants = allUniqueRestaurant.size();
 
-        customerThenRestaurants.addAll(allUniqueCustomer.stream().map(customer->customer.getCustomerLocation()).collect(Collectors.toList()));
-        customerThenRestaurants.addAll(allUniqueRestaurant.stream().map(restaurant -> restaurant.getRestaurantLocation()).collect(Collectors.toList()));
+        //customerThenRestaurants.addAll(allUniqueCustomer.stream().map(customer->customer.getCustomerLocation()).collect(Collectors.toList()));
+        //customerThenRestaurants.addAll(allUniqueRestaurant.stream().map(restaurant -> restaurant.getRestaurantLocation()).collect(Collectors.toList()));
 
-        double [][] allToAll = routeMatrix.getAllToAll(customerThenRestaurants) ;
+        double [][] allToAllDistance = routeMatrix.getAllToAllDistanceMatrix(customerThenRestaurants);
+        double [][] allToAllTime = routeMatrix.getAllToAllTimeMatrix(customerThenRestaurants);
+        this.allToAllDistanceMatrix = allToAllDistance;
+        this.allToAllTimeMatrix = allToAllTime;
+        this.locationIndexMap = locationIndexMap;
 
-        customerCustomerDistanceMatrix = Utility.extractSubArray(allToAll, 0, noOfUniqueCustomers-1, 0, noOfUniqueCustomers-1);
-        restaurantRestaurantDistanceMatrix = Utility.extractSubArray(allToAll, noOfUniqueCustomers, (noOfUniqueCustomers + noOfUniqueRestaurants)-1, noOfUniqueCustomers, (noOfUniqueCustomers + noOfUniqueRestaurants)-1 );
-        customerRestaurantDistanceMatrix = Utility.extractSubArray(allToAll, 0, noOfUniqueCustomers-1, noOfUniqueCustomers, (noOfUniqueCustomers + noOfUniqueRestaurants)-1);
+        System.out.println(customerThenRestaurants);
+        System.out.println(locationIndexMap);
+
+//        //printing allToALLTimeMatrix
+//        for(int i=0; i<allToAllTimeMatrix.length; i++)
+//        {
+//            for(int j=0; j<allToAllTimeMatrix[i].length; j++) {
+//                System.out.print(allToAllTimeMatrix[i][j] + " ");
+//
+//            }
+//            System.out.println();
+//        }
+
+        customerCustomerDistanceMatrix = Utility.extractSubArray(allToAllDistance, 0, noOfUniqueCustomers-1, 0, noOfUniqueCustomers-1);
+        restaurantRestaurantDistanceMatrix = Utility.extractSubArray(allToAllDistance, noOfUniqueCustomers, (noOfUniqueCustomers + noOfUniqueRestaurants)-1, noOfUniqueCustomers, (noOfUniqueCustomers + noOfUniqueRestaurants)-1 );
+        customerRestaurantDistanceMatrix = Utility.extractSubArray(allToAllDistance, 0, noOfUniqueCustomers-1, noOfUniqueCustomers, (noOfUniqueCustomers + noOfUniqueRestaurants)-1);
 
 
 
     }
+
 
 
 
@@ -96,21 +166,22 @@ public class GeneratePopulation {
 
 
     //creation of initial population
-    public Set<List<Location>> createInitialPopulation()
+    public Set<Path> createInitialPopulation()
     {
 
         Set<List<GapedOrder>> gapedOrdersSet = getGapedOrders(orders);
 
-        Set<List<Location>> gapedOrderListToLocationList = new HashSet<>();
+
+        Set<Path> initialPopulationPaths = new HashSet<Path>();
 
         for(List<GapedOrder> singleGapedOrder : gapedOrdersSet)
         {
             List<Location> singleGapedOrderListToLocationList = Utility.gapedOrderListToLocationList(singleGapedOrder);
-            gapedOrderListToLocationList.add(singleGapedOrderListToLocationList);
+            initialPopulationPaths.add(new Path(singleGapedOrder));
         }
 
 
-        return gapedOrderListToLocationList;
+        return initialPopulationPaths;
     }
 
 
@@ -261,49 +332,34 @@ public class GeneratePopulation {
 //    }
 
     //selecting parents for candidate creation
-    public List<List<GapedOrder>> selectParents(List<List<GapedOrder>> allParentGapedOrderList)
+    public List<Path> selectParents(List<Path> allParentPathList)
     {
-        //for selecting three parents randomly
-        int randomOne = (int) ((allParentGapedOrderList.size()) * Math.random());
-        int randomTwo = (int) ((allParentGapedOrderList.size()) * Math.random());
-        int randomThree = (int) ((allParentGapedOrderList.size()) * Math.random());
 
-        List<List<GapedOrder>> selectedParents = new ArrayList<List<GapedOrder>>();
+        int selectionCount = 3;
+        Set<Path> selectedParents = new HashSet<Path>();
 
-        List<GapedOrder> parentOne = new ArrayList<GapedOrder>();
-        List<GapedOrder> parentTwo = new ArrayList<GapedOrder>();
-        List<GapedOrder> parentThree = new ArrayList<GapedOrder>();
+        Random random = new Random();
 
-        if((randomOne != randomTwo) && (randomOne != randomThree))
-            selectedParents.add(allParentGapedOrderList.get(randomOne));
-        else
-            selectedParents.add(allParentGapedOrderList.get(randomOne - 1));
+        while(selectedParents.size()<selectionCount){
+            selectedParents.add(allParentPathList.get(random.nextInt(allParentPathList.size())));
+        }
 
-        if((randomTwo != randomOne) && (randomTwo != randomThree))
-            selectedParents.add(allParentGapedOrderList.get(randomTwo));
-        else
-            selectedParents.add(allParentGapedOrderList.get(randomTwo - 1));
-
-        if((randomThree != randomOne) && (randomThree != randomTwo))
-            selectedParents.add(allParentGapedOrderList.get(randomThree));
-        else
-            selectedParents.add(allParentGapedOrderList.get(randomThree - 1));
-
-        return selectedParents;
+        return selectedParents.stream().collect(Collectors.toList());
     }
 
 
-
     //function for candidate creation
-    public List<Location> candidateCreation(List<List<GapedOrder>> allParentGapedOrderList)
+    public Path createCandidate(List<Path> selectedParentPathList)
     {
 
-        allParentGapedOrderList.stream().forEach(parent-> {
-            System.out.println("-----------------------\n");
-            parent.stream().forEach(gapedOrder-> System.out.println(Utility.formatToPrintGapedOrder(gapedOrder)));
-        });
+//        allParentGapedOrderList.stream().forEach(parent-> {
+//            System.out.println("-----------------------\n");
+//            parent.stream().forEach(gapedOrder-> System.out.println(Utility.formatToPrintGapedOrder(gapedOrder)));
+//        });
+//
+//        System.out.println("-----------------------\n");
 
-        System.out.println("-----------------------\n");
+        List<List<GapedOrder>> allParentGapedOrderList = selectedParentPathList.stream().map(path -> path.getPathGapedOrders()).collect(Collectors.toList());
 
         List<GapedOrder> newCandidateGapedOrder = new ArrayList<GapedOrder>();
         Set<Order> alreadyConsideredOrders = new HashSet<Order>();
@@ -324,16 +380,12 @@ public class GeneratePopulation {
             }
 
         }
+        Path newCandidatePath = new Path(newCandidateGapedOrder);
 
 
-        return Utility.gapedOrderListToLocationList(newCandidateGapedOrder);
+        return newCandidatePath;
 
     }
-
-
-
-
-
 
 
 
@@ -349,8 +401,4 @@ public class GeneratePopulation {
 
 
 
-    public static void main(String args[])
-    {
-        GeneratePopulation obj = new GeneratePopulation();
-    }
 }
