@@ -5,6 +5,7 @@ import com.xav.Utility;
 import com.xav.receivedData.Order;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -185,5 +186,53 @@ public class Path {
 
         return cumulativeTimeArray[cumulativeTimeArray.length-1];
     }
+
+
+    //function to check pareto
+/**
+     *
+     * @param path
+     * @return  0   -   when  neither path dominates
+     *          1   -   when calling path dominates path passed as parameter
+     *          -1  -   when path passed as parameter dominates the calling path
+     *
+     */
+    public int dominates(Path path) throws IOException {
+        int dominanceArray[] = new int[3];
+
+        //totalOrderValue
+        dominanceArray[0] = Utility.checkDominanceOfDouble(this.getTotalOrderValue(), path.getTotalOrderValue(), 1);
+        //totalDistance
+        dominanceArray[1] = Utility.checkDominanceOfDouble(this.getTotalDistance(), path.getTotalDistance(), -1);
+        //totalTime
+        dominanceArray[2] = Utility.checkDominanceOfDouble(this.getTotalTime(), path.getTotalTime(),-1);
+
+        Arrays.sort(dominanceArray);
+
+        int firstElement = dominanceArray[0];
+
+        int sumOfFirstNLast = dominanceArray[0] + dominanceArray[dominanceArray.length - 1];
+
+        if( firstElement == -1){
+
+            if(sumOfFirstNLast > -1){
+                return 0;
+            }
+            return  -1;
+
+        }else if(firstElement == 0){
+            if(sumOfFirstNLast > 0)
+            {
+                return 1;
+            }
+            return 0;
+        }
+        else
+            return 1;
+
+    }
+
+    //to check for skewed dominance
+
 
 }

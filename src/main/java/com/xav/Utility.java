@@ -236,10 +236,59 @@ public class Utility {
         return "Restaurant-"+order.getOrder().getRestaurant().getRestaurantId()+" Customer-"+order.getOrder().getCustomer().getCustomerId()+" gap="+order.getGap() ;
     }
 
+    /**
+     * @param path1Attribute   expects a double value which is attribute of Path 1(calling path)
+     * @param path2Attribute   expects a double value which is attribute of Path 2(argument path)
+     * @param dominanceType     expects a positive(>=0) or negative(<0), which determines positive/negative dominance of path1Attribute over path2Attribute
+     * @return  0    -   when path1Attribute and path2Attribute  are equal;
+     *          1    -   when path1Attribute dominates path2Attribute;
+     *          -1   -   when path2Attribute dominates path1Attribute;
+     */
+    public static int checkDominanceOfDouble(double path1Attribute , double path2Attribute , int dominanceType){
+
+        // dominanceType -2
+        //path1attribute < path2attribute
+        //return 1
+
+
+
+//        if(((path1Attribute - path2Attribute) * dominanceType ) > 0  )
+//            return 1;
+//        else if(((path1Attribute - path2Attribute) * dominanceType ) < 0  )
+//            return -1;
+//        else return 0;
+
+        if(dominanceType>=0) //maximising
+        {
+            if(path1Attribute > path2Attribute)
+                return 1;
+            else if (path2Attribute > path1Attribute )
+                return -1;
+            else
+                return 0;
+        }
+
+        else //minimising
+        {
+            if(path1Attribute < path2Attribute)
+                return 1;
+            else if(path2Attribute < path1Attribute)
+                return -1;
+            else
+                return 0;
+        }
+
+
+
+    }
+
+
+
 
     //function for dominance test(pareto solution)
     public boolean checkDominance(Path singleParent, Path candidate) throws IOException //returns true if candidate dominates parent
     {
+
         //flags for comparing parent and candidate
         int orderValue = 0;
         int totalDistance = 0;

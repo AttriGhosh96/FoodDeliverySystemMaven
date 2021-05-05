@@ -15,7 +15,7 @@ public class GeneratePopulation {
 
 
 
-    private static final double SELECTION_CONSTANT = 0.4;
+    private static final double SELECTION_CONSTANT = 0.40;
 
     private static GeneratePopulation generatePopulationObject;
 
@@ -373,17 +373,18 @@ public class GeneratePopulation {
                 double orderSelectionDeterminant = Math.random();
                 if((orderSelectionDeterminant<=SELECTION_CONSTANT) && (! alreadyConsideredOrders.contains(gapedOrderOfParent.getOrder())))
                 {
-                    System.out.println("Picking -> "+Utility.formatToPrintGapedOrder(gapedOrderOfParent)+" of "+i+"th parent");
+//                    System.out.println("Picking -> "+Utility.formatToPrintGapedOrder(gapedOrderOfParent)+" of "+i+"th parent");
                     newCandidateGapedOrder.add(gapedOrderOfParent);
                     alreadyConsideredOrders.add(gapedOrderOfParent.getOrder());
                 }
             }
 
         }
-        Path newCandidatePath = new Path(newCandidateGapedOrder);
+        if(newCandidateGapedOrder.size()!=0)
+        return  new Path(newCandidateGapedOrder);
 
 
-        return newCandidatePath;
+        return null;
 
     }
 
