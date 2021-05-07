@@ -223,7 +223,7 @@ public class GeneratePopulation {
         int size = orderCombinationsNPermutations.size();
         for (List<Order> orderPermutation : orderCombinationsNPermutations)
         {
-            System.out.println(count+"/"+size);
+//            System.out.println(count+"/"+size);
             count++;
 
             List<GapedOrder> gapedOrderOnePermutationList = new ArrayList<GapedOrder>();

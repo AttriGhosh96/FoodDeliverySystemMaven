@@ -216,10 +216,10 @@ public class TestCaseOne {
         orderPlaced.add(orderFour);
         orderPlaced.add(orderFive);
         orderPlaced.add(orderSix);
-        orderPlaced.add(orderSeven);
-        orderPlaced.add(orderEight);
-        orderPlaced.add(orderNine);
-        orderPlaced.add(orderTen);
+//        orderPlaced.add(orderSeven);
+//        orderPlaced.add(orderEight);
+//        orderPlaced.add(orderNine);
+//        orderPlaced.add(orderTen);
 
         return orderPlaced;
     }

@@ -18,9 +18,12 @@ public class DifferentialEvolutionPareto {
 
     public static final int MAX_NUMBER_OF_GENERATIONS_ALLOWED = 20;
 
-    public static final double MAX_SIZE_PERCENTAGE_FOR_NEXT_GENERATION = 0.85;
+    public static final double MAX_SIZE_PERCENTAGE_FOR_NEXT_GENERATION = 0.75;
 
     public static void startAlgorithm() throws IOException {
+        //final non dominated list to be returned
+        List<Path> nonDominated = new ArrayList<Path>();
+
         //singleton object of GeneratePopulation class
         GeneratePopulation generatePopulationInstance = GeneratePopulation.getGeneratePopulationInstance();
 
@@ -65,14 +68,17 @@ public class DifferentialEvolutionPareto {
             }
 
             if (nextPopulation.size() != 0 ) {
+                nonDominated = getNonDominatedPaths(nextPopulation);
                 currentPopulation = nextPopulation;
                 counterForConsecutivePopulationRepetition = 0;
             }
             else if( counterForConsecutivePopulationRepetition > MAX_CONSECUTIVE_POPULATION_REPETITION_ALLOWED )
                 throw  new RuntimeException("Same Population being reused more than "+MAX_CONSECUTIVE_POPULATION_REPETITION_ALLOWED+"  times ");
         }
-        displayPopulation(currentPopulation);
-        displayPaths(currentPopulation);
+//        displayPopulation(currentPopulation);
+//        displayPaths(currentPopulation);
+        displayPopulation(nonDominated);
+        displayPaths(nonDominated);
         //printing next population
 //        System.out.println("Next Population\t size: "+nextPopulation.size());
 //        displayPopulation(nextPopulation);
@@ -100,6 +106,24 @@ public class DifferentialEvolutionPareto {
         }
 
     }
+
+    //for final non-dominated set
+    public static List<Path> getNonDominatedPaths(List<Path> lastBestPopulation) throws IOException {
+        List<Path> nonDominated = new ArrayList<Path>();
+        for(int i=0; i<lastBestPopulation.size(); i++)
+        {
+            for (int j=i+1; j<lastBestPopulation.size()-1; j++)
+            {
+                int dominanceCheck = lastBestPopulation.get(i).dominates(lastBestPopulation.get(j));
+                if((dominanceCheck == 1) && (!nonDominated.contains(lastBestPopulation.get(i))))
+                    nonDominated.add(lastBestPopulation.get(i));
+                else if((dominanceCheck == -1) && (!nonDominated.contains(lastBestPopulation.get(j))))
+                    nonDominated.add(lastBestPopulation.get(j));
+            }
+        }
+        return nonDominated;
+    }
+
 
 
 
