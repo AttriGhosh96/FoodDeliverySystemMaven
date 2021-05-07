@@ -2,6 +2,7 @@ package com.xav.differentialEvolution;
 
 import com.xav.GeneratePopulation;
 import com.xav.pojo.Path;
+import org.decimal4j.util.DoubleRounder;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -15,6 +16,10 @@ public class DifferentialEvolutionPareto {
 
     public static final int MAX_CONSECUTIVE_POPULATION_REPETITION_ALLOWED = 50;
 
+    public static final int MAX_NUMBER_OF_GENERATIONS_ALLOWED = 20;
+
+    public static final double MAX_SIZE_PERCENTAGE_FOR_NEXT_GENERATION = 0.85;
+
     public static void startAlgorithm() throws IOException {
         //singleton object of GeneratePopulation class
         GeneratePopulation generatePopulationInstance = GeneratePopulation.getGeneratePopulationInstance();
@@ -27,7 +32,7 @@ public class DifferentialEvolutionPareto {
         List<Path> currentPopulation = initialPopulationList;
 
         //generating multiple generations
-        for(int iterator = 1; iterator<=20; iterator++) {
+        for(int iterator = 1; iterator<=MAX_NUMBER_OF_GENERATIONS_ALLOWED; iterator++) {
             //Printing current population
             System.out.println("Current Population\t Generation Number: " + iterator + "\t size: " + currentPopulation.size());
 //        displayPopulation(currentPopulation);
@@ -37,7 +42,7 @@ public class DifferentialEvolutionPareto {
             List<Path> selectedParents;
             int counterForPopulationGeneration = 0;
             int counterForConsecutivePopulationRepetition = 0;
-            while (nextPopulation.size() <= (0.85 * currentPopulation.size()) && counterForPopulationGeneration < MAX_ITERATION_FOR_NEW_POPULATION_GENERATION) {
+            while (nextPopulation.size() <= (MAX_SIZE_PERCENTAGE_FOR_NEXT_GENERATION * currentPopulation.size()) && counterForPopulationGeneration < MAX_ITERATION_FOR_NEW_POPULATION_GENERATION) {
                 counterForPopulationGeneration++;
                 counterForConsecutivePopulationRepetition++;
                 //selecting parents for candidate creation
@@ -90,7 +95,7 @@ public class DifferentialEvolutionPareto {
         System.out.println("Path Number\t\t\t Total Distance(in Km)\t\t\t Total Time(in minutes)\t\t\t Total Order Value(in Rs)");
         for(Path path : Paths)
         {
-            System.out.println(count+"\t\t\t" +path.getTotalDistance()+ "\t\t\t" +path.getTotalTime()/60+ "\t\t\t"+ path.getTotalOrderValue());
+            System.out.println(count+"\t\t\t\t\t\t" + DoubleRounder.round(path.getTotalDistance(),3)+ "\t\t\t\t\t\t\t" +DoubleRounder.round(path.getTotalTime()/60,3)+ "\t\t\t\t\t\t\t"+ path.getTotalOrderValue());
             count ++;
         }
 

@@ -6,14 +6,15 @@ import com.xav.mapQuest.routeMatrix.RouteMatrix;
 import com.xav.mapQuest.routeMatrix.RouteMatrixInterface;
 import com.xav.pojo.*;
 import com.xav.receivedData.Order;
+import com.xav.web.TestCaseOne;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class GeneratePopulation {
-
-
 
     private static final double SELECTION_CONSTANT = 0.40;
 
@@ -71,8 +72,10 @@ public class GeneratePopulation {
 
 
     public void initialisation() throws IOException {
-        POCInitialization pocObj = new POCInitialization();
-        orders = pocObj.getOrders();
+//        POCInitialization pocObj = new POCInitialization();
+//        orders = pocObj.getOrders();
+        TestCaseOne obj = new TestCaseOne();
+        orders = obj.getOrders();
 
 
 
@@ -212,9 +215,17 @@ public class GeneratePopulation {
 
         //for converting all generated permutations of the order list to gaped orders
         Set<List<GapedOrder>> gapedOrdersOfAllCombinationsNPermutations = new HashSet<List<GapedOrder>>();
+        //make subset of orderCombinationsNPermutation
 
+
+
+        int count = 0;
+        int size = orderCombinationsNPermutations.size();
         for (List<Order> orderPermutation : orderCombinationsNPermutations)
         {
+            System.out.println(count+"/"+size);
+            count++;
+
             List<GapedOrder> gapedOrderOnePermutationList = new ArrayList<GapedOrder>();
             for(Order order : orderPermutation) //till with A
             {

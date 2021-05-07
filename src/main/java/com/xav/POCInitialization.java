@@ -32,9 +32,9 @@ public class POCInitialization {
     //Restaurant Location
     public List<Location> getRestaurantLocation()
     {
-        Location restaurantOne = new Location(Location.LocationType.RESTAURANT, 22.589764, 88.411746);
-        Location restaurantTwo = new Location(Location.LocationType.RESTAURANT, 22.580333, 88.43786);
-        Location restaurantThree = new Location(Location.LocationType.RESTAURANT, 22.56898, 88.41151);
+        Location restaurantOne = new Location(Location.LocationType.RESTAURANT, 22.59070, 88.41136);
+        Location restaurantTwo = new Location(Location.LocationType.RESTAURANT, 22.58091, 88.43805);
+        Location restaurantThree = new Location(Location.LocationType.RESTAURANT, 22.56894, 88.41088);
 
         List<Location> restaurantLocationList = new ArrayList<Location>();
         restaurantLocationList.add(restaurantOne);
@@ -128,6 +128,7 @@ public class POCInitialization {
         return allOrderValues;
     }
 
+    //all orders
     public Set<Order> getOrders()
     {
         List<Customer> allCustomer = getCustomer();
