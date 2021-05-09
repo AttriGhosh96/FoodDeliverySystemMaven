@@ -77,6 +77,14 @@ public class GeneratePopulation {
         TestCaseOne obj = new TestCaseOne();
         orders = obj.getOrders();
 
+        //printing the orders
+        System.out.println("List of Orders:");
+        int count =0;
+        for(Order order: orders)
+        {
+            System.out.print("Order Number:"+ (++count) + " ");
+            System.out.println(order);
+        }
 
 
 
@@ -119,8 +127,8 @@ public class GeneratePopulation {
         this.allToAllTimeMatrix = allToAllTime;
         this.locationIndexMap = locationIndexMap;
 
-        System.out.println(customerThenRestaurants);
-        System.out.println(locationIndexMap);
+//        System.out.println(customerThenRestaurants);
+//        System.out.println(locationIndexMap);
 
 //        //printing allToALLTimeMatrix
 //        for(int i=0; i<allToAllTimeMatrix.length; i++)

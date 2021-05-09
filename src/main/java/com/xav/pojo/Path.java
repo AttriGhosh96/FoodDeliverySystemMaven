@@ -3,12 +3,10 @@ package com.xav.pojo;
 import com.xav.GeneratePopulation;
 import com.xav.Utility;
 import com.xav.receivedData.Order;
+import org.decimal4j.util.DoubleRounder;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Path {
@@ -232,7 +230,23 @@ public class Path {
 
     }
 
-    //to check for skewed dominance
+    //to print path in desired format
+    public void getPathPrintedInRequiredFormat()
+    {
+        List<Location> alreadyVisitedRestaurant = new ArrayList<Location>();
+        for(Location location: pathLocations)
+        {
+            for(GapedOrder gapedOrder: pathGapedOrders)
+            {
+                if((gapedOrder.getOrder().getRestaurant().getRestaurantLocation() == location) && !alreadyVisitedRestaurant.contains(location)) {
+                    System.out.print("Pick up order from Restaurant " + gapedOrder.getOrder().getRestaurant().getRestaurantId() + " at [ " + DoubleRounder.round(location.getLatitude(),3) + " , " + DoubleRounder.round(location.getLongitude(),3) + "]  ");
+                    alreadyVisitedRestaurant.add(location);
+                }
+                else if(gapedOrder.getOrder().getCustomer().getCustomerLocation() == location)
+                    System.out.print("Drop off order at Customer " + gapedOrder.getOrder().getCustomer().getCustomerId() + " at [ " + DoubleRounder.round(location.getLatitude(),3) + " , " + DoubleRounder.round(location.getLongitude(),3) + "]  ");
+            }
+        }
+    }
 
 
 }

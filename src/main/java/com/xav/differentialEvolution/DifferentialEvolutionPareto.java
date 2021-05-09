@@ -1,6 +1,8 @@
 package com.xav.differentialEvolution;
 
 import com.xav.GeneratePopulation;
+import com.xav.pojo.GapedOrder;
+import com.xav.pojo.Location;
 import com.xav.pojo.Path;
 import org.decimal4j.util.DoubleRounder;
 
@@ -33,11 +35,17 @@ public class DifferentialEvolutionPareto {
         //converting Set<Path> to List<Path>
         List<Path> initialPopulationList = initialPopulation.stream().collect(Collectors.toList());
         List<Path> currentPopulation = initialPopulationList;
+        //to get order value for minimum distance path
+        getMinimumDistanceOrderValue(initialPopulationList);
+        //to get order value for minimum time path
+        getMinimumTimeOrderValue(initialPopulationList);
+
 
         //generating multiple generations
         for(int iterator = 1; iterator<=MAX_NUMBER_OF_GENERATIONS_ALLOWED; iterator++) {
             //Printing current population
-            System.out.println("Current Population\t Generation Number: " + iterator + "\t size: " + currentPopulation.size());
+            System.out.println(" Generation Number: " + iterator + "\t size: " + currentPopulation.size());
+            displayPathAttributes(currentPopulation);
 //        displayPopulation(currentPopulation);
 
             //creation of next population
@@ -65,10 +73,12 @@ public class DifferentialEvolutionPareto {
 
                     }
                 }
+//                System.out.println("Size of population: " +nextPopulation.size());
+//                displayPaths(nextPopulation);
             }
 
             if (nextPopulation.size() != 0 ) {
-                nonDominated = getNonDominatedPaths(nextPopulation);
+//                nonDominated = getNonDominatedPaths(nextPopulation);
                 currentPopulation = nextPopulation;
                 counterForConsecutivePopulationRepetition = 0;
             }
@@ -77,12 +87,14 @@ public class DifferentialEvolutionPareto {
         }
 //        displayPopulation(currentPopulation);
 //        displayPaths(currentPopulation);
-        displayPopulation(nonDominated);
-        displayPaths(nonDominated);
-        //printing next population
-//        System.out.println("Next Population\t size: "+nextPopulation.size());
-//        displayPopulation(nextPopulation);
+        printPathInRequiredFormat(currentPopulation);
+        displayPathAttributes(currentPopulation);
 
+        printFormattedPath(currentPopulation);
+
+//        System.out.println("Non Dominated Routes");
+//        displayPopulation(nonDominated);
+//        displayPaths(nonDominated);
     }
 
     //for displaying populations
@@ -96,7 +108,7 @@ public class DifferentialEvolutionPareto {
     }
 
     //for displaying paths with properties
-    public static void displayPaths(List<Path> Paths) throws IOException {
+    public static void displayPathAttributes(List<Path> Paths) throws IOException {
         int count = 1;
         System.out.println("Path Number\t\t\t Total Distance(in Km)\t\t\t Total Time(in minutes)\t\t\t Total Order Value(in Rs)");
         for(Path path : Paths)
@@ -124,7 +136,67 @@ public class DifferentialEvolutionPareto {
         return nonDominated;
     }
 
+    //printing the path in a required format
+    public static void printPathInRequiredFormat(List<Path> pathList)
+    {
+        for(Path path: pathList)
+        {
+            List<Location> locationsInPath = path.getPathLocations();
+            List<GapedOrder> gapedOrdersInPath = path.getPathGapedOrders();
+            System.out.println("Path");
+            for(Location location: locationsInPath)
+            {
+                System.out.print("[" + location.getLocationType() + " , " + DoubleRounder.round(location.getLatitude(),3) + " , " + DoubleRounder.round(location.getLongitude(),3) + "] | ");
+            }
+            System.out.println();
+        }
+    }
 
+    //printing order value of minimum distance path of initial population
+    public static void getMinimumDistanceOrderValue(List<Path> initialPopulation) throws IOException {
+        double minimumDistance = Double.MAX_VALUE;
+        Path minimumDistancePath = initialPopulation.get(0);
+        for(Path path: initialPopulation) {
+            if (path.getTotalDistance() < minimumDistance) {
+                minimumDistance = path.getTotalDistance();
+                minimumDistancePath = path;
+            }
+        }
+        System.out.println("Minimum Distance Path: " + minimumDistancePath);
+        System.out.println("Minimum Distance: " +minimumDistance +" kms");
+        System.out.println("Order Value Corresponding to Minimum Distance Path: Rs " + minimumDistancePath.getTotalOrderValue());
+    }
+
+
+    //printing order value of minimum time path of initial population
+    public static void getMinimumTimeOrderValue(List<Path> initialPopulation)
+    {
+        double minimumTime = Double.MAX_VALUE;
+        Path minimumTimePath = initialPopulation.get(0);
+        for(Path path: initialPopulation)
+        {
+            if(path.getTotalTime() < minimumTime)
+            {
+                minimumTime = path.getTotalTime();
+                minimumTimePath = path;
+            }
+        }
+        System.out.println("Minimum Time Path: " + minimumTimePath);
+        System.out.println("Minimum Time: " +minimumTime/60 +" minutes");
+        System.out.println("Order Value Corresponding to Minimum Time Path: Rs " + minimumTimePath.getTotalOrderValue());
+    }
+
+    //printing trial
+    public static void printFormattedPath(List<Path> finalPopulation)
+    {
+        //trying format
+        for(Path path: finalPopulation)
+        {
+            path.getPathPrintedInRequiredFormat();
+            System.out.println();
+        }
+
+    }
 
 
 }
