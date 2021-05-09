@@ -239,11 +239,11 @@ public class Path {
             for(GapedOrder gapedOrder: pathGapedOrders)
             {
                 if((gapedOrder.getOrder().getRestaurant().getRestaurantLocation() == location) && !alreadyVisitedRestaurant.contains(location)) {
-                    System.out.print("Pick up order from Restaurant " + gapedOrder.getOrder().getRestaurant().getRestaurantId() + " at [ " + DoubleRounder.round(location.getLatitude(),3) + " , " + DoubleRounder.round(location.getLongitude(),3) + "]  ");
+                    System.out.print("Pick up order from Restaurant " + gapedOrder.getOrder().getRestaurant().getRestaurantId() + " at [" + DoubleRounder.round(location.getLatitude(),3) + " , " + DoubleRounder.round(location.getLongitude(),3) + "]  ");
                     alreadyVisitedRestaurant.add(location);
                 }
                 else if(gapedOrder.getOrder().getCustomer().getCustomerLocation() == location)
-                    System.out.print("Drop off order at Customer " + gapedOrder.getOrder().getCustomer().getCustomerId() + " at [ " + DoubleRounder.round(location.getLatitude(),3) + " , " + DoubleRounder.round(location.getLongitude(),3) + "]  ");
+                    System.out.print("Drop off order at Customer " + gapedOrder.getOrder().getCustomer().getCustomerId() + " at [" + DoubleRounder.round(location.getLatitude(),3) + " , " + DoubleRounder.round(location.getLongitude(),3) + "]  ");
             }
         }
     }
