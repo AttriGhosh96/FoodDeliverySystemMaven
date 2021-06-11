@@ -409,12 +409,7 @@ public class GeneratePopulation {
 
 
 
-    //getting the routes for initial population
-    private Set<List<Location>> getRandomPathFromOrders(Set<Order> orders)
-    {
 
-        return null;
-    }
 
 
 

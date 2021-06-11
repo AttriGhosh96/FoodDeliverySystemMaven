@@ -40,13 +40,15 @@ public class DifferentialEvolutionPareto {
         //to get order value for minimum time path
         getMinimumTimeOrderValue(initialPopulationList);
 
+        //trying
+//        int maxNoOfGenerationsAllowed = (int) (0.015*initialPopulationList.size());
 
         //generating multiple generations
         for(int iterator = 1; iterator<=MAX_NUMBER_OF_GENERATIONS_ALLOWED; iterator++) {
             //Printing current population
             System.out.println(" Generation Number: " + iterator + "\t size: " + currentPopulation.size());
             displayPathAttributes(currentPopulation);
-            if(iterator == 20)
+            if(iterator == MAX_NUMBER_OF_GENERATIONS_ALLOWED)
                 printFormattedPath(currentPopulation);
 
             //creation of next population
